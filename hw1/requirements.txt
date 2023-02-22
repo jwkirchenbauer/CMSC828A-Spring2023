@@ -1,0 +1,18 @@
+# assumes you have a conda environment with python ~3.10
+# basics, torch 1.13 is recommended
+numpy
+torch
+
+# modeling and training
+transformers
+tokenizers
+accelerate
+datasets 
+evaluate
+seqeval
+wandb
+
+# analysis and plotting
+pandas
+scikit-learn
+matplotlib 
