@@ -9,7 +9,7 @@ Notably, the `--with_tracking` flag lets you log to a gui experiment tracker lik
 
 Basic Usage
 ```
-python run_image_classification_no_trainer.py \
+python run_ensemble_no_trainer.py \
     --output_dir ./output \
     --model_name_or_path microsoft/resnet-18 \
     --with_tracking
