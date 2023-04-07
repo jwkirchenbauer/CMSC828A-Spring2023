@@ -1,0 +1,62 @@
+import os
+import glob
+import json
+import logging
+from typing import Any, Mapping, Iterable, Union, List, Callable, Optional
+
+from tqdm.auto import tqdm
+
+
+def resolve_globs(glob_paths: Union[str, Iterable[str]]):
+    """Returns filepaths corresponding to input filepath pattern(s)."""
+    filepaths = []
+    if isinstance(glob_paths, str):
+        glob_paths = [glob_paths]
+
+    for path in glob_paths:
+        filepaths.extend(glob.glob(path))
+
+    return filepaths
+
+
+def read_jsonlines(filename: str) -> Iterable[Mapping[str, Any]]:
+    """Yields an iterable of Python dicts after reading jsonlines from the input file."""
+    file_size = os.path.getsize(filename)
+    with open(filename) as fp:
+        for line in tqdm(fp.readlines(), desc=f'Reading JSON lines from {filename}', unit='lines'):
+            try:
+                example = json.loads(line)
+                yield example
+            except json.JSONDecodeError as ex:
+                logging.error(f'Input text: "{line}"')
+                logging.error(ex.args)
+                raise ex
+
+
+def load_jsonlines(filename: str) -> List[Mapping[str, Any]]:
+    """Returns a list of Python dicts after reading jsonlines from the input file."""
+    return list(read_jsonlines(filename))
+
+
+def write_jsonlines(objs: Iterable[Mapping[str, Any]], filename: str, to_dict: Callable = lambda x: x):
+    """Writes a list of Python Mappings as jsonlines at the input file."""
+    with open(filename, 'w') as fp:
+        for obj in tqdm(objs, desc=f'Writing JSON lines at {filename}'):
+            fp.write(json.dumps(to_dict(obj)))
+            fp.write('\n')
+
+
+def read_json(filename: str) -> Mapping[str, Any]:
+    """Returns a Python dict representation of JSON object at input file."""
+    with open(filename) as fp:
+        return json.load(fp)
+
+
+def write_json(obj: Mapping[str, Any], filename: str):
+    """Writes a Python Mapping at the input file in JSON format."""
+    with open(filename, 'w') as fp:
+        json.dump(obj, fp)
+
+
+def print_json(d, indent=4):
+    print(json.dumps(d, indent=indent))
